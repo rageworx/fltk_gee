@@ -180,8 +180,11 @@ wMain::wMain( int argc, char** argv )
 
 #endif // _WIN32
 
-    //comRView->range(1,28);
+#if 0
     comRView->range(1,360);
+#else
+    comRView->range(1,28);
+#endif
     comRView->position(1);
     imageview( 0 );
 
@@ -364,11 +367,14 @@ void wMain::applyThemes()
 
 void wMain::imageview( int idx )
 {
-    Fl_JPEG_Image* jpgimg = new Fl_JPEG_Image( "test.jpg" );
-    if ( jpgimg != NULL )
+    Fl_PNG_Image* pngimg = new Fl_PNG_Image( "test.png" );
+    if ( pngimg != NULL )
     {
+#ifdef DEBUG
+        printf( "PNG image loaded : %ux%ux%u\n",
+                pngimg->w(), pngimg->h(), pngimg->d() );
+#endif // DEBUG
         Fl_RGB_Image* newimg = NULL;
-
 #if 0
         static char tmps[256] = {0};
         float fv = (float)idx / 360.f;
@@ -376,7 +382,7 @@ void wMain::imageview( int idx )
         fv *= fr;
         sprintf( tmps, "Free rotate %f degree ...", fv );
         boxStatus->label( tmps );
-        newimg = rotatefree( (Fl_RGB_Image*)jpgimg, fv );
+        newimg = rotatefree( (Fl_RGB_Image*)pngimg, fv );
 
 #else
         switch( idx )
@@ -384,57 +390,57 @@ void wMain::imageview( int idx )
             default:
             case 0:
                 boxStatus->label( "Normal image" );
-                newimg = (Fl_RGB_Image*)jpgimg->copy();
+                newimg = (Fl_RGB_Image*)pngimg->copy();
                 break;
 
             case 1:
                 boxStatus->label( "Flip Vertical" );
-                newimg = flipvertical( (Fl_RGB_Image*)jpgimg );
+                newimg = flipvertical( (Fl_RGB_Image*)pngimg );
                 break;
 
             case 2:
                 boxStatus->label( "Flip Horizental" );
-                newimg = fliphorizontal( (Fl_RGB_Image*)jpgimg );
+                newimg = fliphorizontal( (Fl_RGB_Image*)pngimg );
                 break;
 
             case 3:
                 boxStatus->label( "Fast rotate 90 degree" );
-                newimg = rotate90( (Fl_RGB_Image*)jpgimg );
+                newimg = rotate90( (Fl_RGB_Image*)pngimg );
                 break;
 
             case 4:
                 boxStatus->label( "Fast rotate 180 degree" );
-                newimg = rotate180( (Fl_RGB_Image*)jpgimg );
+                newimg = rotate180( (Fl_RGB_Image*)pngimg );
                 break;
 
             case 5:
                 boxStatus->label( "Fast rotate 270 degree" );
-                newimg = rotate270( (Fl_RGB_Image*)jpgimg );
+                newimg = rotate270( (Fl_RGB_Image*)pngimg );
                 break;
 
             case 6:
                 boxStatus->label( "Free rotate 20 degree" );
-                newimg = rotatefree( (Fl_RGB_Image*)jpgimg, 20 );
+                newimg = rotatefree( (Fl_RGB_Image*)pngimg, 20 );
                 break;
 
             case 7:
                 boxStatus->label( "Free rotate 358 degree" );
-                newimg = rotatefree( (Fl_RGB_Image*)jpgimg, 0.1 );
+                newimg = rotatefree( (Fl_RGB_Image*)pngimg, 0.1 );
                 break;
 
             case 8:
                 boxStatus->label( "Brightness 50% up" );
-                newimg = brightness( (Fl_RGB_Image*)jpgimg, 50 );
+                newimg = brightness( (Fl_RGB_Image*)pngimg, 50 );
                 break;
 
             case 9:
                 boxStatus->label( "Contrast 50% up" );
-                newimg = contrast( (Fl_RGB_Image*)jpgimg, 50 );
+                newimg = contrast( (Fl_RGB_Image*)pngimg, 50 );
                 break;
 
             case 10:
                 boxStatus->label( "Gamma 150%" );
-                newimg = gamma( (Fl_RGB_Image*)jpgimg, 1.5 );
+                newimg = gamma( (Fl_RGB_Image*)pngimg, 1.5 );
                 break;
 
             case 11:
@@ -443,7 +449,7 @@ void wMain::imageview( int idx )
                     kfconfig* filter = new_kfconfig( "sharpen" );
                     if ( filter != NULL )
                     {
-                        newimg = filtered( (Fl_RGB_Image*)jpgimg, filter );
+                        newimg = filtered( (Fl_RGB_Image*)pngimg, filter );
                         discard_kfconfig( filter );
                     }
                 }
@@ -455,7 +461,7 @@ void wMain::imageview( int idx )
                     kfconfig* filter = new_kfconfig( "blur" );
                     if ( filter != NULL )
                     {
-                        newimg = filtered( (Fl_RGB_Image*)jpgimg, filter );
+                        newimg = filtered( (Fl_RGB_Image*)pngimg, filter );
                         discard_kfconfig( filter );
                     }
                 }
@@ -467,7 +473,7 @@ void wMain::imageview( int idx )
                     kfconfig* filter = new_kfconfig( "blurmore" );
                     if ( filter != NULL )
                     {
-                        newimg = filtered( (Fl_RGB_Image*)jpgimg, filter );
+                        newimg = filtered( (Fl_RGB_Image*)pngimg, filter );
                         discard_kfconfig( filter );
                     }
                 }
@@ -486,7 +492,7 @@ void wMain::imageview( int idx )
                         filter.m[ cnt ] = 1.0 / ( fsz * fsz );
                     }
 
-                    newimg = filtered( (Fl_RGB_Image*)jpgimg, &filter );
+                    newimg = filtered( (Fl_RGB_Image*)pngimg, &filter );
 
                     delete filter.m;
                 }
@@ -506,12 +512,12 @@ void wMain::imageview( int idx )
                 {
                     boxStatus->label( "Crop image ( center 50% )" );
 
-                    unsigned cw = jpgimg->w() / 2;
-                    unsigned ch = jpgimg->h() / 2;
-                    unsigned cx = jpgimg->w() - cw;
-                    unsigned cy = jpgimg->h() - ch;
+                    unsigned cw = pngimg->w() / 2;
+                    unsigned ch = pngimg->h() / 2;
+                    unsigned cx = pngimg->w() - cw;
+                    unsigned cy = pngimg->h() - ch;
 
-                    newimg = crop( (Fl_RGB_Image*)jpgimg, cx, cy, cw, ch );
+                    newimg = crop( (Fl_RGB_Image*)pngimg, cx, cy, cw, ch );
                 }
                 break;
 
@@ -529,12 +535,12 @@ void wMain::imageview( int idx )
                     }
                     else
                     {
-                        amapsize = makealphamap( amap, jpgimg->w(), jpgimg->h(), 0.8f );
+                        amapsize = makealphamap( amap, pngimg->w(), pngimg->h(), 0.8f );
                     }
 
                     if ( amapsize > 0 )
                     {
-                        newimg = applyalpha( (Fl_RGB_Image*)jpgimg, amap, amapsize );
+                        newimg = applyalpha( (Fl_RGB_Image*)pngimg, amap, amapsize );
                     }
 
                     if ( amapsrc != NULL )
@@ -558,12 +564,12 @@ void wMain::imageview( int idx )
 
                         mergeconfig cfg = {0};
 
-                        cfg.src2putx = ( jpgimg->w() - mimg->w() ) / 2;
-                        cfg.src2puty = ( jpgimg->h() - mimg->h() ) / 2;
+                        cfg.src2putx = ( pngimg->w() - mimg->w() ) / 2;
+                        cfg.src2puty = ( pngimg->h() - mimg->h() ) / 2;
                         cfg.src1ratio = 1.0f;
                         cfg.src2ratio = 0.8f;
 
-                        newimg = merge( (Fl_RGB_Image*)jpgimg, (Fl_RGB_Image*)mimg, &cfg );
+                        newimg = merge( (Fl_RGB_Image*)pngimg, (Fl_RGB_Image*)mimg, &cfg );
 
                         delete mimg;
                     }
@@ -582,10 +588,10 @@ void wMain::imageview( int idx )
                             printf(" PNG file has error !\n" );
                         }
 
-                        int px = ( jpgimg->w() - mimg->w() ) / 2;
-                        int py = ( jpgimg->h() - mimg->h() ) / 2;
+                        int px = ( pngimg->w() - mimg->w() ) / 2;
+                        int py = ( pngimg->h() - mimg->h() ) / 2;
 
-                        newimg = subtract( (Fl_RGB_Image*)jpgimg, (Fl_RGB_Image*)mimg, px, py, 0.4f );
+                        newimg = subtract( (Fl_RGB_Image*)pngimg, (Fl_RGB_Image*)mimg, px, py, 0.4f );
 
                         delete mimg;
                     }
@@ -604,7 +610,7 @@ void wMain::imageview( int idx )
                             printf(" PNG file has error !\n" );
                         }
 
-                        newimg = (Fl_RGB_Image*)jpgimg->copy();
+                        newimg = (Fl_RGB_Image*)pngimg->copy();
 
                         int imgw = mimg->w();
                         int imgh = mimg->h();
@@ -622,22 +628,22 @@ void wMain::imageview( int idx )
 
             case 22:
                 boxStatus->label( "Reinhard tone mapping (HDRi)" );
-                newimg = tonemapping_reinhard( (Fl_RGB_Image*)jpgimg, 0.0f, 0.3f );
+                newimg = tonemapping_reinhard( (Fl_RGB_Image*)pngimg, 0.0f, 0.3f );
                 break;
 
             case 23:
                 boxStatus->label( "Drago tone mapping (HDRi)" );
-                newimg = tonemapping_drago( (Fl_RGB_Image*)jpgimg );
+                newimg = tonemapping_drago( (Fl_RGB_Image*)pngimg );
                 break;
 
             case 24:
                 boxStatus->label( "Invert" );
-                newimg = invert( (Fl_RGB_Image*)jpgimg );
+                newimg = invert( (Fl_RGB_Image*)pngimg );
                 break;
 
             case 25:
                 boxStatus->label( "Edge enhance by factor 8" );
-                newimg = edgeenhance( (Fl_RGB_Image*)jpgimg, 8 );
+                newimg = edgeenhance( (Fl_RGB_Image*)pngimg, 8 );
                 break;
 
             case 26:
@@ -647,7 +653,7 @@ void wMain::imageview( int idx )
                     unsigned rW = 128;
                     unsigned rH = 1;
 
-                    newimg = CLAHE( (Fl_RGB_Image*)jpgimg,
+                    newimg = CLAHE( (Fl_RGB_Image*)pngimg,
                                     rW,
                                     rH,
                                     90.0f );
@@ -661,7 +667,7 @@ void wMain::imageview( int idx )
                     unsigned rW = 128;
                     unsigned rH = 1;
 
-                    newimg = noire( (Fl_RGB_Image*)jpgimg,
+                    newimg = noire( (Fl_RGB_Image*)pngimg,
                                     rW,
                                     rH,
                                     90.1f,
@@ -674,7 +680,7 @@ void wMain::imageview( int idx )
 
         comRView->image( newimg );
 
-        delete jpgimg;
+        delete pngimg;
         discard_user_rgb_image( newimg );
     }
 

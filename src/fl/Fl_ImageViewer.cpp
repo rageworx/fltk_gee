@@ -116,19 +116,7 @@ void Fl_ImageViewer::multiplyratio( float rf )
     float rc_x = 0.0f;
     float rc_y = 0.0f;
 
-    if ( imgcached != NULL )
-    {
-        Fl_RGB_Image* refimg = (Fl_RGB_Image*)imgcached;
-
-        if ( ( refimg->array != NULL ) && ( refimg->alloc_array == 0 ) )
-        {
-            delete[] refimg->array;
-        }
-
-        delete imgcached;
-
-        imgcached = NULL;
-    }
+    fl_imgtk::discard_user_rgb_image( imgcached );
 
     multiplier   = rf;
     float f_w    = imgsrc->w() * multiplier;

@@ -258,9 +258,8 @@ void wMain::createComponents()
         comRView = new Fl_ImageViewer( cli_x, cli_y, cli_w, cli_h - 20 );
         if ( comRView != NULL )
         {
-#ifndef DEBUG
-            comRView->resizemethod( 1 );
-#endif // DEBUG
+            comRView->resizemethod( 2, true );
+            comRView->color( 0xFF333300 );
             comRView->callback( fl_w_cb, this );
             comRView->notifier( this );
         }

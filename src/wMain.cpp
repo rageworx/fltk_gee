@@ -144,7 +144,8 @@ wMain::wMain( int argc, char** argv )
    _argv( argv ),
    _runsatfullscreen( false ),
    _keyprocessing( false ),
-   testswitch( NULL )
+   testswitch( NULL ),
+   imgTestSrc( NULL )
 {
     parseParams();
     createComponents();
@@ -183,7 +184,7 @@ wMain::wMain( int argc, char** argv )
 #if 0
     comRView->range(1,360);
 #else
-    comRView->range(1,28);
+    comRView->range(1,30);
 #endif
     comRView->position(1);
     imageview( 0 );
@@ -196,7 +197,10 @@ wMain::wMain( int argc, char** argv )
 
 wMain::~wMain()
 {
-
+    if ( imgTestSrc != NULL )
+    {
+        discard_user_rgb_image( imgTestSrc );
+    }
 }
 
 int wMain::Run()
@@ -259,7 +263,7 @@ void wMain::createComponents()
         if ( comRView != NULL )
         {
             comRView->resizemethod( 2, true );
-            comRView->color( 0xFF333300 );
+            comRView->color( 0xFF33CC00 );
             comRView->callback( fl_w_cb, this );
             comRView->notifier( this );
         }
@@ -366,13 +370,24 @@ void wMain::applyThemes()
 
 void wMain::imageview( int idx )
 {
-    Fl_PNG_Image* pngimg = new Fl_PNG_Image( "test.png" );
-    if ( pngimg != NULL )
+    if ( imgTestSrc == NULL )
     {
+        Fl_PNG_Image* pngimg = new Fl_PNG_Image( "test.png" );
+        if ( pngimg != NULL )
+        {
 #ifdef DEBUG
-        printf( "PNG image loaded : %ux%ux%u\n",
-                pngimg->w(), pngimg->h(), pngimg->d() );
+            printf( "PNG source image loaded : %ux%ux%u\n",
+                    pngimg->w(), pngimg->h(), pngimg->d() );
 #endif // DEBUG
+        }
+
+        imgTestSrc = (Fl_RGB_Image*)pngimg->copy();
+
+        delete pngimg;
+    }
+
+    if ( imgTestSrc != NULL )
+    {
         Fl_RGB_Image* newimg = NULL;
 #if 0
         static char tmps[256] = {0};
@@ -381,104 +396,221 @@ void wMain::imageview( int idx )
         fv *= fr;
         sprintf( tmps, "Free rotate %f degree ...", fv );
         boxStatus->label( tmps );
-        newimg = rotatefree( (Fl_RGB_Image*)pngimg, fv );
+        newimg = rotatefree( imgTestSrc, fv );
 
 #else
         switch( idx )
         {
             default:
             case 0:
-                boxStatus->label( "Normal image" );
-                newimg = (Fl_RGB_Image*)pngimg->copy();
+                //boxStatus->label( "Normal image" );
+                //newimg = (Fl_RGB_Image*)imgTestSrc->copy();
+                {
+                    boxStatus->label( "Gradation Vertical." );
+                    newimg = fl_imgtk::makegradation_v( comRView->w(),
+                                                        comRView->h(),
+                                                        0x7070FFFF,
+                                                        0x1010907F,
+                                                        true );
+                }
                 break;
 
             case 1:
-                boxStatus->label( "Flip Vertical" );
-                newimg = flipvertical( (Fl_RGB_Image*)pngimg );
+                //boxStatus->label( "Flip Vertical" );
+                //newimg = flipvertical( imgTestSrc );
+                {
+                    boxStatus->label( "Gradation Horizontal." );
+                    newimg = fl_imgtk::makegradation_h( comRView->w(),
+                                                        comRView->h(),
+                                                        0x7070FFFF,
+                                                        0x1010907F,
+                                                        true );
+                }
                 break;
 
             case 2:
-                boxStatus->label( "Flip Horizental" );
-                newimg = fliphorizontal( (Fl_RGB_Image*)pngimg );
+                //boxStatus->label( "Normal image" );
+                //newimg = (Fl_RGB_Image*)imgTestSrc->copy();
+                {
+                    boxStatus->label( "Draw Lines." );
+                    newimg = (Fl_RGB_Image*)imgTestSrc->copy();
+                    /*
+                    newimg = fl_imgtk::makeanempty( imgTestSrc->w(),
+                                                    imgTestSrc->h(),
+                                                    4,
+                                                    0xFFFFFFFF );
+                    */
+                    if ( newimg != NULL )
+                    {
+                        unsigned ygap = 50;
+
+                        unsigned x1 = 10;
+                        unsigned x2 = newimg->w() - 10;
+                        unsigned y1 = 10;
+                        unsigned y2 = y1 + ygap;
+
+                        unsigned cols[] = { 0xFF0000FF,
+                                            0x00FF00FF,
+                                            0x0000FFFF,
+                                            0xFF00007F,
+                                            0x00FF007F,
+                                            0x0000FF7F };
+
+                        for( size_t cnt=0; cnt<6; cnt++ )
+                        {
+                            fl_imgtk::draw_line( newimg,
+                                                 x1, y1 + ( 10 * cnt ),
+                                                 x2, y2 + ( 10 * cnt ),
+                                                 cols[cnt] );
+                        }
+
+                        y1 = 100;
+                        y2 = y1 + ygap;
+
+                        for( size_t cnt=0; cnt<6; cnt++ )
+                        {
+                            fl_imgtk::draw_smooth_line( newimg,
+                                                        x1, y1 + ( 10 * cnt ),
+                                                        x2, y2 + ( 10 * cnt ),
+                                                        cols[cnt] );
+                        }
+
+                        y1 = 200;
+                        y2 = y1 + ygap;
+
+                        for( size_t cnt=0; cnt<6; cnt++ )
+                        {
+                            fl_imgtk::draw_smooth_line_ex( newimg,
+                                                           x1, y1 + ( 10 * cnt ),
+                                                           x2, y2 + ( 10 * cnt ),
+                                                           2.f,
+                                                           cols[cnt] );
+                        }
+
+                        y1 = 300;
+                        y2 = y1 + ygap;
+
+                        for( size_t cnt=0; cnt<6; cnt++ )
+                        {
+                            fl_imgtk::draw_smooth_line_ex( newimg,
+                                                           x1, y1 + ( 10 * cnt ),
+                                                           x2, y2 + ( 10 * cnt ),
+                                                           10.f,
+                                                           cols[cnt] );
+
+                            unsigned centercol = 0x18181870;
+                            fl_imgtk::draw_smooth_line( newimg,
+                                                        x1, y1 + ( 10 * cnt ),
+                                                        x2, y2 + ( 10 * cnt ),
+                                                        centercol );
+
+                        }
+
+                    }
+                }
                 break;
 
             case 3:
-                boxStatus->label( "Fast rotate 90 degree" );
-                newimg = rotate90( (Fl_RGB_Image*)pngimg );
+                boxStatus->label( "Flip Vertical" );
+                newimg = flipvertical( imgTestSrc );
                 break;
 
             case 4:
-                boxStatus->label( "Fast rotate 180 degree" );
-                newimg = rotate180( (Fl_RGB_Image*)pngimg );
+                boxStatus->label( "Flip Horizental" );
+                newimg = fliphorizontal( imgTestSrc );
                 break;
 
             case 5:
-                boxStatus->label( "Fast rotate 270 degree" );
-                newimg = rotate270( (Fl_RGB_Image*)pngimg );
+                boxStatus->label( "Fast rotate 90 degree" );
+                newimg = rotate90( imgTestSrc );
                 break;
 
             case 6:
-                boxStatus->label( "Free rotate 20 degree" );
-                newimg = rotatefree( (Fl_RGB_Image*)pngimg, 20 );
+                boxStatus->label( "Fast rotate 180 degree" );
+                newimg = rotate180( imgTestSrc );
                 break;
 
             case 7:
-                boxStatus->label( "Free rotate 358 degree" );
-                newimg = rotatefree( (Fl_RGB_Image*)pngimg, 0.1 );
+                boxStatus->label( "Fast rotate 270 degree" );
+                newimg = rotate270( imgTestSrc );
                 break;
 
             case 8:
-                boxStatus->label( "Brightness 50% up" );
-                newimg = brightness( (Fl_RGB_Image*)pngimg, 50 );
+                boxStatus->label( "Free rotate 20 degree" );
+                newimg = rotatefree( imgTestSrc, 20 );
                 break;
 
             case 9:
-                boxStatus->label( "Contrast 50% up" );
-                newimg = contrast( (Fl_RGB_Image*)pngimg, 50 );
+                {
+                    boxStatus->label( "Free rotate 340 degree ( w/ transparency )" );
+                    Fl_RGB_Image* img4b = makeanempty( imgTestSrc->w(), imgTestSrc->h(),
+                                                       4, 0x00000000 );
+                    if ( img4b != NULL )
+                    {
+                        drawonimage( img4b, imgTestSrc );
+                        printf( "img4b : %ux%ux%u\n",
+                                img4b->w(), img4b->h(), img4b->d() );
+                        newimg = rotatefree( img4b, 360-40 );
+                        newimg->uncache();
+                        printf( "rotated newimg : %ux%ux%u\n",
+                                newimg->w(), newimg->h(), newimg->d() );
+                        discard_user_rgb_image( img4b );
+                    }
+                }
                 break;
 
             case 10:
-                boxStatus->label( "Gamma 150%" );
-                newimg = gamma( (Fl_RGB_Image*)pngimg, 1.5 );
+                boxStatus->label( "Brightness 50% up" );
+                newimg = brightness( imgTestSrc, 50 );
                 break;
 
             case 11:
+                boxStatus->label( "Contrast 50% up" );
+                newimg = contrast( imgTestSrc, 50 );
+                break;
+
+            case 12:
+                boxStatus->label( "Gamma 150%" );
+                newimg = gamma( imgTestSrc, 1.5 );
+                break;
+
+            case 13:
                 {
                     boxStatus->label( "built in Sharpen filter" );
                     kfconfig* filter = new_kfconfig( "sharpen" );
                     if ( filter != NULL )
                     {
-                        newimg = filtered( (Fl_RGB_Image*)pngimg, filter );
-                        discard_kfconfig( filter );
-                    }
-                }
-                break;
-
-            case 12:
-                {
-                    boxStatus->label( "built in Blur filter" );
-                    kfconfig* filter = new_kfconfig( "blur" );
-                    if ( filter != NULL )
-                    {
-                        newimg = filtered( (Fl_RGB_Image*)pngimg, filter );
-                        discard_kfconfig( filter );
-                    }
-                }
-                break;
-
-            case 13:
-                {
-                    boxStatus->label( "built in Blur more filter" );
-                    kfconfig* filter = new_kfconfig( "blurmore" );
-                    if ( filter != NULL )
-                    {
-                        newimg = filtered( (Fl_RGB_Image*)pngimg, filter );
+                        newimg = filtered( imgTestSrc, filter );
                         discard_kfconfig( filter );
                     }
                 }
                 break;
 
             case 14:
+                {
+                    boxStatus->label( "built in Blur filter" );
+                    kfconfig* filter = new_kfconfig( "blur" );
+                    if ( filter != NULL )
+                    {
+                        newimg = filtered( imgTestSrc, filter );
+                        discard_kfconfig( filter );
+                    }
+                }
+                break;
+
+            case 15:
+                {
+                    boxStatus->label( "built in Blur more filter" );
+                    kfconfig* filter = new_kfconfig( "blurmore" );
+                    if ( filter != NULL )
+                    {
+                        newimg = filtered( imgTestSrc, filter );
+                        discard_kfconfig( filter );
+                    }
+                }
+                break;
+
+            case 16:
                 {
                     boxStatus->label( "Custom 10x10 blurring filter (may takes seconds)" );
                     // 10x10 large filter.
@@ -491,36 +623,36 @@ void wMain::imageview( int idx )
                         filter.m[ cnt ] = 1.0 / ( fsz * fsz );
                     }
 
-                    newimg = filtered( (Fl_RGB_Image*)pngimg, &filter );
+                    newimg = filtered( imgTestSrc, &filter );
 
                     delete filter.m;
                 }
                 break;
 
-            case 15:
+            case 17:
                 boxStatus->label( "Render window to image" );
                 newimg = draw_widgetimage( mainWindow );
                 break;
 
-            case 16:
+            case 18:
                 boxStatus->label( "Render window to blurred image" );
                 newimg = drawblurred_widgetimage( mainWindow, 10 );
                 break;
 
-            case 17:
+            case 19:
                 {
                     boxStatus->label( "Crop image ( center 50% )" );
 
-                    unsigned cw = pngimg->w() / 2;
-                    unsigned ch = pngimg->h() / 2;
-                    unsigned cx = pngimg->w() - cw;
-                    unsigned cy = pngimg->h() - ch;
+                    unsigned cw = imgTestSrc->w() / 2;
+                    unsigned ch = imgTestSrc->h() / 2;
+                    unsigned cx = imgTestSrc->w() - cw;
+                    unsigned cy = imgTestSrc->h() - ch;
 
-                    newimg = crop( (Fl_RGB_Image*)pngimg, cx, cy, cw, ch );
+                    newimg = crop( imgTestSrc, cx, cy, cw, ch );
                 }
                 break;
 
-            case 18:
+            case 20:
                 {
                     boxStatus->label( "Alpha channel mapping" );
 
@@ -534,12 +666,12 @@ void wMain::imageview( int idx )
                     }
                     else
                     {
-                        amapsize = makealphamap( amap, pngimg->w(), pngimg->h(), 0.8f );
+                        amapsize = makealphamap( amap, imgTestSrc->w(), imgTestSrc->h(), 0.8f );
                     }
 
                     if ( amapsize > 0 )
                     {
-                        newimg = applyalpha( (Fl_RGB_Image*)pngimg, amap, amapsize );
+                        newimg = applyalpha( imgTestSrc, amap, amapsize );
                     }
 
                     if ( amapsrc != NULL )
@@ -549,7 +681,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 19:
+            case 21:
                 {
                     boxStatus->label( "Image merging A(100%) + B(80%)" );
 
@@ -563,19 +695,19 @@ void wMain::imageview( int idx )
 
                         mergeconfig cfg = {0};
 
-                        cfg.src2putx = ( pngimg->w() - mimg->w() ) / 2;
-                        cfg.src2puty = ( pngimg->h() - mimg->h() ) / 2;
+                        cfg.src2putx = ( imgTestSrc->w() - mimg->w() ) / 2;
+                        cfg.src2puty = ( imgTestSrc->h() - mimg->h() ) / 2;
                         cfg.src1ratio = 1.0f;
                         cfg.src2ratio = 0.8f;
 
-                        newimg = merge( (Fl_RGB_Image*)pngimg, (Fl_RGB_Image*)mimg, &cfg );
+                        newimg = merge( imgTestSrc, (Fl_RGB_Image*)mimg, &cfg );
 
                         delete mimg;
                     }
                 }
                 break;
 
-            case 20:
+            case 22:
                 {
                     boxStatus->label( "Image subtracting A(100%) + B(40%)" );
 
@@ -587,17 +719,17 @@ void wMain::imageview( int idx )
                             printf(" PNG file has error !\n" );
                         }
 
-                        int px = ( pngimg->w() - mimg->w() ) / 2;
-                        int py = ( pngimg->h() - mimg->h() ) / 2;
+                        int px = ( imgTestSrc->w() - mimg->w() ) / 2;
+                        int py = ( imgTestSrc->h() - mimg->h() ) / 2;
 
-                        newimg = subtract( (Fl_RGB_Image*)pngimg, (Fl_RGB_Image*)mimg, px, py, 0.4f );
+                        newimg = subtract( imgTestSrc, (Fl_RGB_Image*)mimg, px, py, 0.4f );
 
                         delete mimg;
                     }
                 }
                 break;
 
-            case 21:
+            case 23:
                 {
                     boxStatus->label( "Draw image to image with alpha." );
 
@@ -609,7 +741,7 @@ void wMain::imageview( int idx )
                             printf(" PNG file has error !\n" );
                         }
 
-                        newimg = (Fl_RGB_Image*)pngimg->copy();
+                        newimg = (Fl_RGB_Image*)imgTestSrc->copy();
 
                         int imgw = mimg->w();
                         int imgh = mimg->h();
@@ -625,48 +757,48 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 22:
-                boxStatus->label( "Reinhard tone mapping (HDRi)" );
-                newimg = tonemapping_reinhard( (Fl_RGB_Image*)pngimg, 0.0f, 0.3f );
-                break;
-
-            case 23:
-                boxStatus->label( "Drago tone mapping (HDRi)" );
-                newimg = tonemapping_drago( (Fl_RGB_Image*)pngimg );
-                break;
-
             case 24:
-                boxStatus->label( "Invert" );
-                newimg = invert( (Fl_RGB_Image*)pngimg );
+                boxStatus->label( "Reinhard tone mapping (HDRi)" );
+                newimg = tonemapping_reinhard( imgTestSrc, 0.0f, 0.3f );
                 break;
 
             case 25:
-                boxStatus->label( "Edge enhance by factor 8" );
-                newimg = edgeenhance( (Fl_RGB_Image*)pngimg, 8 );
+                boxStatus->label( "Drago tone mapping (HDRi)" );
+                newimg = tonemapping_drago( imgTestSrc );
                 break;
 
             case 26:
+                boxStatus->label( "Invert" );
+                newimg = invert( imgTestSrc );
+                break;
+
+            case 27:
+                boxStatus->label( "Edge enhance by factor 8" );
+                newimg = edgeenhance( imgTestSrc, 8 );
+                break;
+
+            case 28:
                 {
                     boxStatus->label( "Color CLAHE, 128x1, clip limit = 90." );
 
                     unsigned rW = 128;
                     unsigned rH = 1;
 
-                    newimg = CLAHE( (Fl_RGB_Image*)pngimg,
+                    newimg = CLAHE( imgTestSrc,
                                     rW,
                                     rH,
                                     90.0f );
                 }
                 break;
 
-            case 27:
+            case 29:
                 {
                     boxStatus->label( "Noire effect ( Belong to CLAHE ), 128x1, clip limit = 90, bright = 1.5x" );
 
                     unsigned rW = 128;
                     unsigned rH = 1;
 
-                    newimg = noire( (Fl_RGB_Image*)pngimg,
+                    newimg = noire( imgTestSrc,
                                     rW,
                                     rH,
                                     90.1f,
@@ -678,8 +810,6 @@ void wMain::imageview( int idx )
 #endif // 1
 
         comRView->image( newimg );
-
-        delete pngimg;
         discard_user_rgb_image( newimg );
     }
 

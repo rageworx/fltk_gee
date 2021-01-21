@@ -20,6 +20,7 @@
 					<Add directory="$(#fl.include)" />
 				</Compiler>
 				<Linker>
+					<Add library="fl_imgtk_d" />
 					<Add directory="lib" />
 					<Add directory="$(#fl.lib)" />
 				</Linker>
@@ -31,14 +32,15 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-march=core2" />
 					<Add option="-fomit-frame-pointer" />
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-O3" />
+					<Add option="-march=core2" />
 					<Add directory="$(#fl.include)" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="fl_imgtk_omp" />
 					<Add directory="$(#fl.lib)" />
 					<Add directory="lib" />
 				</Linker>
@@ -60,7 +62,6 @@
 			<Add option="-static" />
 			<Add option="-fopenmp" />
 			<Add option="-ffast-math" />
-			<Add library="fl_imgtk_omp" />
 			<Add library="fltk_images" />
 			<Add library="fltk_png" />
 			<Add library="fltk_jpeg" />

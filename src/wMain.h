@@ -58,6 +58,7 @@ class wMain : public Fl_ImageViewerNotifier
         Fl_Box*                 boxStatus;
         Fl_ImageViewer*         comRView;
         Fl_GroupAniSwitch*      testswitch;
+        Fl_RGB_Image*           imgTestSrc;
 };
 
 #endif /// of __WINMAIN_H__

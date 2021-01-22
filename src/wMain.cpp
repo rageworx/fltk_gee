@@ -184,7 +184,7 @@ wMain::wMain( int argc, char** argv )
 #if 0
     comRView->range(1,360);
 #else
-    comRView->range(1,30);
+    comRView->range(1,31);
 #endif
     comRView->position(1);
     imageview( 0 );
@@ -262,7 +262,11 @@ void wMain::createComponents()
         comRView = new Fl_ImageViewer( cli_x, cli_y, cli_w, cli_h - 20 );
         if ( comRView != NULL )
         {
+#ifdef DEBUG
+            comRView->resizemethod( 1, true );
+#else
             comRView->resizemethod( 2, true );
+#endif /// of DEBUG
             comRView->color( 0xFF33CC00 );
             comRView->callback( fl_w_cb, this );
             comRView->notifier( this );
@@ -429,8 +433,6 @@ void wMain::imageview( int idx )
                 break;
 
             case 2:
-                //boxStatus->label( "Normal image" );
-                //newimg = (Fl_RGB_Image*)imgTestSrc->copy();
                 {
                     boxStatus->label( "Draw Lines." );
                     newimg = (Fl_RGB_Image*)imgTestSrc->copy();
@@ -511,36 +513,70 @@ void wMain::imageview( int idx )
                 break;
 
             case 3:
+                {
+                    boxStatus->label( "Draw Polygons" );
+                    newimg = (Fl_RGB_Image*)imgTestSrc->copy();
+
+                    fl_imgtk::vecpoint star[] =
+                    { { 488,  38}, { 634, 328 }, { 961, 365 }, { 724, 581}, { 776, 896 },
+                      { 490, 750}, { 195, 890 }, { 253, 580 }, {  22, 365}, { 344, 322 } };
+
+                    for( size_t cnt=0; cnt<10; cnt++ )
+                    {
+                        star[cnt].x *= 0.75f;
+                        star[cnt].y *= 0.75f;
+                    }
+
+                    DWORD tk1 = GetTickCount();
+                    fl_imgtk::draw_polygon( newimg, star, 10, 0xFFE32DCF );
+                    DWORD tk2 = GetTickCount();
+
+                    printf( "#1 performance : %u ms.\n", tk2 - tk1 );
+
+                    for( size_t cnt=0; cnt<10; cnt++ )
+                    {
+                        star[cnt].x += 50;
+                    }
+
+                    tk1 = GetTickCount();
+                    fl_imgtk::draw_2xaa_polygon( newimg, star, 10, 0x2DE3FFCF );
+                    tk2 = GetTickCount();
+
+                    printf( "#2 formance : %u ms.\n", tk2 - tk1 );
+                }
+                break;
+
+            case 4:
                 boxStatus->label( "Flip Vertical" );
                 newimg = flipvertical( imgTestSrc );
                 break;
 
-            case 4:
+            case 5:
                 boxStatus->label( "Flip Horizental" );
                 newimg = fliphorizontal( imgTestSrc );
                 break;
 
-            case 5:
+            case 6:
                 boxStatus->label( "Fast rotate 90 degree" );
                 newimg = rotate90( imgTestSrc );
                 break;
 
-            case 6:
+            case 7:
                 boxStatus->label( "Fast rotate 180 degree" );
                 newimg = rotate180( imgTestSrc );
                 break;
 
-            case 7:
+            case 8:
                 boxStatus->label( "Fast rotate 270 degree" );
                 newimg = rotate270( imgTestSrc );
                 break;
 
-            case 8:
+            case 9:
                 boxStatus->label( "Free rotate 20 degree" );
                 newimg = rotatefree( imgTestSrc, 20 );
                 break;
 
-            case 9:
+            case 10:
                 {
                     boxStatus->label( "Free rotate 340 degree ( w/ transparency )" );
                     Fl_RGB_Image* img4b = makeanempty( imgTestSrc->w(), imgTestSrc->h(),
@@ -559,22 +595,22 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 10:
+            case 11:
                 boxStatus->label( "Brightness 50% up" );
                 newimg = brightness( imgTestSrc, 50 );
                 break;
 
-            case 11:
+            case 12:
                 boxStatus->label( "Contrast 50% up" );
                 newimg = contrast( imgTestSrc, 50 );
                 break;
 
-            case 12:
+            case 13:
                 boxStatus->label( "Gamma 150%" );
                 newimg = gamma( imgTestSrc, 1.5 );
                 break;
 
-            case 13:
+            case 14:
                 {
                     boxStatus->label( "built in Sharpen filter" );
                     kfconfig* filter = new_kfconfig( "sharpen" );
@@ -586,7 +622,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 14:
+            case 15:
                 {
                     boxStatus->label( "built in Blur filter" );
                     kfconfig* filter = new_kfconfig( "blur" );
@@ -598,7 +634,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 15:
+            case 16:
                 {
                     boxStatus->label( "built in Blur more filter" );
                     kfconfig* filter = new_kfconfig( "blurmore" );
@@ -610,7 +646,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 16:
+            case 17:
                 {
                     boxStatus->label( "Custom 10x10 blurring filter (may takes seconds)" );
                     // 10x10 large filter.
@@ -629,17 +665,17 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 17:
+            case 18:
                 boxStatus->label( "Render window to image" );
                 newimg = draw_widgetimage( mainWindow );
                 break;
 
-            case 18:
+            case 19:
                 boxStatus->label( "Render window to blurred image" );
                 newimg = drawblurred_widgetimage( mainWindow, 10 );
                 break;
 
-            case 19:
+            case 20:
                 {
                     boxStatus->label( "Crop image ( center 50% )" );
 
@@ -652,7 +688,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 20:
+            case 21:
                 {
                     boxStatus->label( "Alpha channel mapping" );
 
@@ -681,7 +717,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 21:
+            case 22:
                 {
                     boxStatus->label( "Image merging A(100%) + B(80%)" );
 
@@ -707,7 +743,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 22:
+            case 23:
                 {
                     boxStatus->label( "Image subtracting A(100%) + B(40%)" );
 
@@ -729,7 +765,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 23:
+            case 24:
                 {
                     boxStatus->label( "Draw image to image with alpha." );
 
@@ -757,27 +793,27 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 24:
+            case 25:
                 boxStatus->label( "Reinhard tone mapping (HDRi)" );
                 newimg = tonemapping_reinhard( imgTestSrc, 0.0f, 0.3f );
                 break;
 
-            case 25:
+            case 26:
                 boxStatus->label( "Drago tone mapping (HDRi)" );
                 newimg = tonemapping_drago( imgTestSrc );
                 break;
 
-            case 26:
+            case 27:
                 boxStatus->label( "Invert" );
                 newimg = invert( imgTestSrc );
                 break;
 
-            case 27:
+            case 28:
                 boxStatus->label( "Edge enhance by factor 8" );
                 newimg = edgeenhance( imgTestSrc, 8 );
                 break;
 
-            case 28:
+            case 29:
                 {
                     boxStatus->label( "Color CLAHE, 128x1, clip limit = 90." );
 
@@ -791,7 +827,7 @@ void wMain::imageview( int idx )
                 }
                 break;
 
-            case 29:
+            case 30:
                 {
                     boxStatus->label( "Noire effect ( Belong to CLAHE ), 128x1, clip limit = 90, bright = 1.5x" );
 

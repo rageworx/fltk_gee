@@ -12,6 +12,7 @@
 
 #include <sys/time.h>
 
+#include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include "Fl_BorderlessWindow.H"
 #include <FL/Fl_PNG_Image.H>

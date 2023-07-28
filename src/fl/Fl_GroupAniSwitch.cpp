@@ -1,3 +1,7 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
 #include "Fl_GroupAniSwitch.h"
 
 #include <FL/Fl_Image_Surface.H>

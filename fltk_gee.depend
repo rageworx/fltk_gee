@@ -1148,7 +1148,7 @@
 1564727049 d:\projects\fltk-1.3.5-2-ts\fl\fl_png_image.h
 	"Fl_Image.H"
 
-1611306364 d:\projects\fl_imgtk\lib\fl_imgtk.h
+1621848151 d:\projects\fl_imgtk\lib\fl_imgtk.h
 	<FL/Fl.H>
 	<FL/Fl_Image.H>
 	<FL/Fl_RGB_Image.H>
@@ -1230,11 +1230,12 @@
 	<windows.h>
 	"resource.h"
 
-1490850804 d:\projects\fltk_gee\res\resource.h
+1621228421 d:\projects\fltk_gee\res\resource.h
 
-1492161992 source:d:\projects\fltk_gee\src\fl\fl_borderlesswindow.cpp
+1621224574 source:d:\projects\fltk_gee\src\fl\fl_borderlesswindow.cpp
 	<windows.h>
 	<sys/time.h>
+	<FL/platform.H>
 	<FL/fl_draw.H>
 	"Fl_BorderlessWindow.H"
 	<FL/Fl_PNG_Image.H>
@@ -1254,7 +1255,10 @@
 	<string>
 	"Fl_TransBox.h"
 
-1611037310 source:d:\projects\fltk_gee\src\fl\fl_groupaniswitch.cpp
+1621844671 source:d:\projects\fltk_gee\src\fl\fl_groupaniswitch.cpp
+	<cstdio>
+	<cstdlib>
+	<cstring>
 	"Fl_GroupAniSwitch.h"
 	<FL/Fl_Image_Surface.H>
 	<FL/fl_draw.H>
@@ -1343,7 +1347,7 @@
 	<FL/Fl_Menu_Bar.H>
 	"Fl_BorderlessWindow.H"
 
-1611305091 source:d:\projects\fltk_gee\src\wmain.cpp
+1621844775 source:d:\projects\fltk_gee\src\wmain.cpp
 	<windows.h>
 	<unistd.h>
 	<time.h>
@@ -1352,6 +1356,7 @@
 	<cstring>
 	<cmath>
 	"wMain.H"
+	<FL/platform.H>
 	<FL/fl_ask.H>
 	<FL/Fl_draw.H>
 	<FL/Fl_RGB_Image.H>
@@ -1361,4 +1366,190 @@
 	<FL/images/png.h>
 	"themes.h"
 	"resource.h"
+
+1619682701 d:\projects\fltk-1.4.0-dev\fl\fl.h
+	<FL/Fl_Export.H>
+	<FL/platform_types.h>
+	<FL/Fl_Cairo.H>
+	"fl_utf8.h"
+	"Enumerations.H"
+	<string.h>
+	<stdio.h>
+	<FL/Fl.H>
+	<FL/Fl_Window.H>
+
+1619683025 d:\projects\fltk-1.4.0-dev\fl\fl_export.h
+
+1619677524 d:\projects\fltk-1.4.0-dev\fl\platform_types.h
+	<stddef.h>
+	<stdint.h>
+	<sys/stat.h>
+	<sys/stat.h>
+	<sys/types.h>
+	<dirent.h>
+	<sys/stat.h>
+	<dirent.h>
+	<sys/types.h>
+	<dirent.h>
+	<sys/stat.h>
+	<sys/types.h>
+	<dirent.h>
+
+1619682846 d:\projects\fltk-1.4.0-dev\fl\fl_cairo.h
+	<FL/Fl_Export.H>
+	<cairo.h>
+
+1619685642 d:\projects\fltk-1.4.0-dev\fl\fl_utf8.h
+	"Fl_Export.H"
+	"fl_types.h"
+	<stdio.h>
+
+1619685635 d:\projects\fltk-1.4.0-dev\fl\fl_types.h
+
+1619752755 d:\projects\fltk-1.4.0-dev\fl\enumerations.h
+	<FL/abi-version.h>
+	"Fl_Export.H"
+	"fl_types.h"
+	<FL/platform_types.h>
+
+1551664578 d:\projects\fltk-1.4.0-dev\fl\abi-version.h
+
+1619685720 d:\projects\fltk-1.4.0-dev\fl\fl_window.h
+	<FL/Fl.H>
+	<FL/Fl_Group.H>
+	<FL/Fl_Bitmap.H>
+
+1619683175 d:\projects\fltk-1.4.0-dev\fl\fl_group.h
+	"Fl_Widget.H"
+
+1619685700 d:\projects\fltk-1.4.0-dev\fl\fl_widget.h
+	"Enumerations.H"
+	"Fl.H"
+
+1619682785 d:\projects\fltk-1.4.0-dev\fl\fl_bitmap.h
+	"Fl_Image.H"
+	"Fl_Widget.H"
+
+1619683315 d:\projects\fltk-1.4.0-dev\fl\fl_image.h
+	"Enumerations.H"
+	"Fl_Widget.H"
+
+1619682810 d:\projects\fltk-1.4.0-dev\fl\fl_box.h
+	"Fl_Widget.H"
+
+1619684016 d:\projects\fltk-1.4.0-dev\fl\fl_rgb_image.h
+	"Fl_Image.H"
+
+1619683327 d:\projects\fltk-1.4.0-dev\fl\fl_image_surface.h
+	<FL/Fl_Widget_Surface.H>
+	<FL/Fl_Image.H>
+	<FL/Fl_Shared_Image.H>
+	<FL/platform_types.h>
+
+1619677524 d:\projects\fltk-1.4.0-dev\fl\fl_widget_surface.h
+	<FL/Fl_Device.H>
+	<FL/Fl_Window.H>
+
+1619682969 d:\projects\fltk-1.4.0-dev\fl\fl_device.h
+	<FL/Fl_Plugin.H>
+	<FL/platform_types.h>
+
+1619683828 d:\projects\fltk-1.4.0-dev\fl\fl_plugin.h
+	"Fl_Preferences.H"
+
+1619683966 d:\projects\fltk-1.4.0-dev\fl\fl_preferences.h
+	<stdio.h>
+	"Fl_Export.H"
+
+1619684135 d:\projects\fltk-1.4.0-dev\fl\fl_shared_image.h
+	"Fl_Image.H"
+
+1619683015 d:\projects\fltk-1.4.0-dev\fl\fl_draw.h
+	<FL/Enumerations.H>
+	<FL/Fl_Graphics_Driver.H>
+
+1619677524 d:\projects\fltk-1.4.0-dev\fl\fl_graphics_driver.h
+	<FL/Fl_Device.H>
+	<FL/Fl_Image.H>
+	<FL/Fl_Bitmap.H>
+	<FL/Fl_Pixmap.H>
+	<FL/Fl_RGB_Image.H>
+
+1619683821 d:\projects\fltk-1.4.0-dev\fl\fl_pixmap.h
+	"Fl_Image.H"
+
+1619682942 d:\projects\fltk-1.4.0-dev\fl\fl_copy_surface.h
+	<FL/Fl_Widget_Surface.H>
+
+1619684730 d:\projects\fltk-1.4.0-dev\fl\fl_sys_menu_bar.h
+	<FL/Fl_Menu_Bar.H>
+	<FL/platform.H>
+	<FL/Fl_Sys_Menu_Bar.H>
+
+1619683681 d:\projects\fltk-1.4.0-dev\fl\fl_menu_bar.h
+	"Fl_Menu_.H"
+
+1619683446 d:\projects\fltk-1.4.0-dev\fl\fl_menu_.h
+	"Fl_Widget.H"
+	"Fl_Menu_Item.H"
+
+1619683716 d:\projects\fltk-1.4.0-dev\fl\fl_menu_item.h
+	"Fl_Widget.H"
+	"Fl_Image.H"
+	<FL/platform_types.h>
+
+1619685826 d:\projects\fltk-1.4.0-dev\fl\platform.h
+	<FL/Fl_Export.H>
+	<FL/platform_types.h>
+	<FL/fl_types.h>
+	"win32.H"
+	"mac.H"
+	"android.H"
+	<FL/fl_types.h>
+	<FL/Enumerations.H>
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<X11/Xatom.h>
+	<FL/Fl_Window.H>
+
+1619685836 d:\projects\fltk-1.4.0-dev\fl\win32.h
+	<windows.h>
+
+1619685804 d:\projects\fltk-1.4.0-dev\fl\mac.h
+	<FL/Fl_Widget.H>
+	<ApplicationServices/ApplicationServices.h>
+
+1619677524 d:\projects\fltk-1.4.0-dev\fl\android.h
+
+1619684065 d:\projects\fltk-1.4.0-dev\fl\fl_scroll.h
+	"Fl_Group.H"
+	"Fl_Scrollbar.H"
+
+1619684081 d:\projects\fltk-1.4.0-dev\fl\fl_scrollbar.h
+	"Fl_Slider.H"
+
+1619684185 d:\projects\fltk-1.4.0-dev\fl\fl_slider.h
+	"Fl_Valuator.H"
+
+1619685648 d:\projects\fltk-1.4.0-dev\fl\fl_valuator.h
+	"Fl_Widget.H"
+
+1619682993 d:\projects\fltk-1.4.0-dev\fl\fl_double_window.h
+	"Fl_Window.H"
+
+1619682838 d:\projects\fltk-1.4.0-dev\fl\fl_button.h
+	"Fl_Widget.H"
+
+1619685509 d:\projects\fltk-1.4.0-dev\fl\fl_tooltip.h
+	<FL/Fl.H>
+	<FL/Fl_Widget.H>
+
+1619759581 d:\projects\fltk-1.4.0-dev\fl\fl_ask.h
+	"Enumerations.H"
+
+1619683836 d:\projects\fltk-1.4.0-dev\fl\fl_png_image.h
+	"Fl_Image.H"
+
+1619683419 d:\projects\fltk-1.4.0-dev\fl\fl_jpeg_image.h
+	"Fl_Image.H"
 

@@ -11,6 +11,7 @@
 #include <cmath>
 
 #include "wMain.H"
+#include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_draw.H>
 #include <FL/Fl_RGB_Image.H>
@@ -151,6 +152,7 @@ wMain::wMain( int argc, char** argv )
     createComponents();
 
 #ifdef _WIN32
+    extern HINSTANCE fl_display;
     HICON
     hIconWindowLarge = (HICON)LoadImage( fl_display,
                                          MAKEINTRESOURCE( IDC_ICON_A ),
@@ -583,14 +585,29 @@ void wMain::imageview( int idx )
                                                        4, 0x00000000 );
                     if ( img4b != NULL )
                     {
-                        drawonimage( img4b, imgTestSrc );
-                        printf( "img4b : %ux%ux%u\n",
-                                img4b->w(), img4b->h(), img4b->d() );
-                        newimg = rotatefree( img4b, 360-40 );
-                        newimg->uncache();
-                        printf( "rotated newimg : %ux%ux%u\n",
-                                newimg->w(), newimg->h(), newimg->d() );
-                        discard_user_rgb_image( img4b );
+                        printf( "drawonimage() ... " ); fflush( stdout );
+                        if ( drawonimage( img4b, imgTestSrc ) == true )
+                        {
+                            printf( "done\n" ); fflush( stdout );
+
+                            printf( "img4b : %ux%ux%u\n",
+                                    img4b->w(), img4b->h(), img4b->d() );
+                            newimg = rotatefree( img4b, 360-40 );
+                            if ( newimg != NULL )
+                            {
+                                printf( "rotated newimg : %ux%ux%u\n",
+                                        newimg->w(), newimg->h(), newimg->d() );
+                            }
+                            else
+                            {
+                                fl_alert( "newimg NULL ?" );
+                            }
+                            discard_user_rgb_image( img4b );
+                        }
+                        else
+                        {
+                            fl_alert( "draw on image failure." );
+                        }
                     }
                 }
                 break;
@@ -651,7 +668,10 @@ void wMain::imageview( int idx )
                     boxStatus->label( "Custom 10x10 blurring filter (may takes seconds)" );
                     // 10x10 large filter.
                     uchar fsz = 10;
-                    kfconfig filter = { fsz, fsz, 1.0f, 0.0f, fsz*fsz, NULL };
+                    kfconfig filter = { fsz, fsz, 
+                                        1.0f, 0.0f, 
+                                        (uchar)(fsz*fsz), 
+                                        NULL };
                     filter.m = new float[ fsz*fsz ];
 
                     for( unsigned cnt=0; cnt<(fsz*fsz); cnt++ )
@@ -800,7 +820,8 @@ void wMain::imageview( int idx )
 
             case 26:
                 boxStatus->label( "Drago tone mapping (HDRi)" );
-                newimg = tonemapping_drago( imgTestSrc );
+                //newimg = tonemapping_drago( imgTestSrc );
+                newimg = tonemapping_drago( imgTestSrc, 1.5f, 0.5f );
                 break;
 
             case 27:
@@ -857,9 +878,14 @@ void wMain::WidgetCB( Fl_Widget* w )
     if ( w == mainWindow )
     {
         fl_message_title( "Program quit" );
-        int retask = fl_ask( "%s", "Program may be terminated if you select YES, Proceed it ?" );
+        int retask = \
+        fl_choice_n( "Program may be terminated if you select %s, Proceed it ?",
+                     fl_yes,
+                     fl_no,
+                     NULL,
+                     fl_yes );
 
-        if ( retask > 0 )
+        if ( retask == 0 )
         {
             mainWindow->hide();
             delete mainWindow;
@@ -881,19 +907,32 @@ void wMain::MenuCB( Fl_Widget* w )
         {
             if ( param == (void*)30 )
             {
+                char gccstr[32] = "Unknown GCC";
                 char tmpstr[32] = {0};
+                unsigned gccabiv = __GXX_ABI_VERSION;
 
-                #ifdef USING_OMP
-                strcat( tmpstr, "with OpenMP," );
-                #endif
+#ifdef USING_OMP
+                snprintf( tmpstr, 32, "with OpenMP," );
+#endif
+
+#if defined(__MINGW64__)
+                snprintf( gccstr, 32, "MinGW-W64" );
+#elif defined(__MINGW32__)
+                snprintf( gccstr, 32, "MinGW-W32" );
+#endif
 
                 fl_message_title( "About this Program:" );
-                fl_message( "%s, %s MinGW-W64 6.3.0\n"
+                fl_message( "%s, %s %s %s(abi=%u)\n"
                             "\n"
-                            "(C) Copyright 2016, 2017 Rageworx software, Raphael Kim (rageworx@@gmail.com)\n"
+                            "(C) Copyright 2016-2023 Rageworx software, Raphael Kim (rageworx@@gmail.com)\n"
                             "*   This program is an open source project, and part of FLTK project.\n"
                             "*   All program codes by Rapahel Kay.",
-                            DEF_APP_NAME, tmpstr );
+                            DEF_APP_NAME, 
+                            tmpstr,
+                            gccstr,
+                            __VERSION__,
+                            gccabiv
+                            );
             }
             else
             if ( param == (void*)31 )
@@ -901,7 +940,7 @@ void wMain::MenuCB( Fl_Widget* w )
                 fl_message_title( "Open sources:" );
                 fl_message( "[%s] used these open source projects, \n"
                             "\n"
-                            "- fltk-1.3.4-ts, https://github.com/rageworx/fltk-1.3.4-1-ts",
+                            "- fltk-custom, https://github.com/rageworx/fltk-custom",
                             DEF_APP_NAME );
             }
         }

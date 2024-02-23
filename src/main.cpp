@@ -1,5 +1,7 @@
 #include "wMain.h"
 
+#include <clocale>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_ask.H>
@@ -16,6 +18,7 @@
 
 void procAutoLocale()
 {
+#ifdef _WIN32
     LANGID currentUIL = GetSystemDefaultLangID();
 
 #ifdef DEBUG
@@ -44,6 +47,9 @@ void procAutoLocale()
     }
 
     setlocale( LC_ALL, convLoc );
+#else
+    setlocale( LC_ALL, "" );
+#endif // _WIN32
 }
 
 void presetFLTKenv()

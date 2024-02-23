@@ -9,11 +9,12 @@
 #include <cstdio>
 #include <cstring>
 #include <cmath>
+#include <cstdint>
 
-#include "wMain.H"
+#include "wMain.h"
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
-#include <FL/Fl_draw.H>
+#include <FL/fl_draw.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_JPEG_Image.H>
@@ -23,6 +24,7 @@
 
 #include "themes.h"
 #include "resource.h"
+#include "tick.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -529,9 +531,9 @@ void wMain::imageview( int idx )
                         star[cnt].y *= 0.75f;
                     }
 
-                    DWORD tk1 = GetTickCount();
+                    uint32_t tk1 = GetTickCount();
                     fl_imgtk::draw_polygon( newimg, star, 10, 0xFFE32DCF );
-                    DWORD tk2 = GetTickCount();
+                    uint32_t tk2 = GetTickCount();
 
                     printf( "#1 performance : %u ms.\n", tk2 - tk1 );
 

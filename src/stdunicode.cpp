@@ -1,5 +1,7 @@
 #ifdef _WIN32
     #include <windows.h>
+#else
+    #include <wchar.h>
 #endif /// of _WIN32
 
 #include <cstdio>

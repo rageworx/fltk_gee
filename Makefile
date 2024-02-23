@@ -6,7 +6,6 @@
 GCC = gcc
 GPP = g++
 AR  = ar
-WRC = windres
 FCG = fltk-config --use-images
 
 # FLTK configs 
@@ -19,18 +18,16 @@ SRC_PATH  = $(BASE_PATH)/src
 
 # TARGET settings
 TARGET_PKG =  fltk_gee
-TARGET_DIR = ./bin/mingw
+TARGET_DIR = ./bin/macOS
 TARGET_OBJ = ./obj
 TARGET_OBJFL = ./obj/fl
 
 # DEFINITIONS
-DEFS += -DWIN32 -D_WIN32 
 #DEFS += -DUNICODE -D_UNICODE -DSUPPORT_WCHAR
 
 # Compiler optiops 
 COPTS += -std=c++11
-COPTS += -mms-bitfields -mwindows
-COPTS += -fopenmp -fomit-frame-pointer -fexpensive-optimizations -O3 -s
+COPTS += -O3
 
 # Where is fl_imgtk?
 FLIMGTK_DIR = ../fl_imgtk/lib
@@ -48,22 +45,16 @@ WFLGAS  = $(CFLAGS)
 
 # LINK FLAG
 LFLAGS += -L$(FLIMGTK_DIR)
-LFLAGS += -static
-LFLAGS += -lfl_imgtk_omp
+LFLAGS += -lfl_imgtk
 LFLAGS += $(FLTKCFG_LFG)
-LFLAGS += -lpthread
 
 # Sources
 SRCS = $(wildcard $(SRC_PATH)/*.cpp)
 FLSRCS = $(wildcard $(SRC_PATH)/fl/*.cpp)
 
-# Windows resource
-WRES = res/resource.rc
-
 # Make object targets from SRCS.
 OBJS = $(SRCS:$(SRC_PATH)/%.cpp=$(TARGET_OBJ)/%.o)
 FLOBJS = $(FLSRCS:$(SRC_PATH)/fl/%.cpp=$(TARGET_OBJ)/fl/%.o)
-WROBJ = $(TARGET_OBJ)/resource.o
 
 .PHONY: prepare clean
 
@@ -91,11 +82,7 @@ $(FLOBJS): $(TARGET_OBJ)/fl/%.o: $(SRC_PATH)/fl/%.cpp
 	@echo "Building fl/$@ ... "
 	@$(GPP) $(CFLAGS) -c $< -o $@
 
-$(WROBJ): $(WRES)
-	@echo "Building windows resource ..."
-	@$(WRC) -i $(WRES) $(WFLAGS) -o $@
-
-$(TARGET_DIR)/$(TARGET_PKG): $(OBJS) $(FLOBJS) $(WROBJ)
+$(TARGET_DIR)/$(TARGET_PKG): $(OBJS) $(FLOBJS)
 	@echo "Generating $@ ..."
 	@$(GPP) $^ $(CFLAGS) $(LFLAGS) -o $@
 	@echo "done."

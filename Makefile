@@ -1,4 +1,4 @@
-# Makefile for fltk-barcode-gen
+# Makefile for fltk-imgtk-gee tech-demo, testing app.
 # ----------------------------------------------------------------------
 # Written by Raph.K.
 #
